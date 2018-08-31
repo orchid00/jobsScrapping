@@ -1,24 +1,75 @@
-library(XML)
-library(RCurl)
-library(tidytext)
-library(janeaustenr)
+
+# load libraries ----------------------------------------------------------
+
+library(rvest)
 library(tidyverse)
+library(tidytext)
 
-url_link <- "https://www.indeed.com/rc/clk?jk=788e7e311656fc54&fccid=09fad757f3449fa5&vjs=3"
-blog <- getURL(url_link)
-blog
-blog %>% 
-    str_split(pattern = "[\]")
 
-new_URL <- "https://us.conv.indeed.com/rc/clk?jk=788e7e311656fc54&ctk=1cm5m4d0a0m6k49v&t=cr&rctype=oth&orgclktk=1cm5m4d0o0m6k1g6&vjs=3&wwwho=4m_xAU4HGQbAlJdZTkhlA8hEG_rFObn1"
-blog <- getURL(new_URL)
-blog
+job_url <- read_html("https://www.indeed.com/rc/clk?jk=788e7e311656fc54&fccid=09fad757f3449fa5&vjs=3")
 
-tmp <- htmlParse(getURI("https://jobs.tdameritrade.com/job/-/-/1121/8389790"))
-content <- xpathSApply(tmp, '//div[@class="descrip-socialshare"]', xmlValue)
+page_content <-
+job_url %>% 
+    html_nodes(css = ".jobsearch-JobComponent") %>% 
+    html_text() %>% 
+    str_replace_all("[\r\n]" , "") %>%  # clean end of line
+    tibble(doc = 1, text = .) # convert character to a tibble
 
-nont <- c("\n", "\t", "\r")
-pages <- gsub(paste(nont, collapse = "|"), " ", content)
+# sentences
+collected_sentences <- 
+    page_content %>% 
+    unnest_tokens(sentence, text, token = "sentences")
+
+collected_sentences
+
+# words
+words_counts <- 
+    page_content %>%
+    unnest_tokens(word, text) %>% 
+    anti_join(stop_words) %>% 
+    group_by(word) %>%
+    count(sort = TRUE) %>%
+    ungroup()
+
+words_counts
+
+
+# plot top words
+words_counts %>%
+    top_n(n = 10) %>%
+    ggplot(aes(x = fct_reorder(word, n), y = n)) +
+    geom_bar(stat = "identity", width = 0.5) + 
+    xlab(NULL) +
+    coord_flip() +
+    ylab("Word Frequency") +
+    ggtitle("Most Common Corpus Words") +
+    theme_minimal() +
+    theme(legend.position = "none", 
+          text = element_text(size = 16, family = "serif"))
+
+
+
+# using xpath
+#job_url %>% 
+#    html_nodes(xpath = '/html/body/div[1]/div[3]/div[3]/div/div/div[1]/div[1]') %>% 
+#    html_text()
+
+
+# job_url <- "https://www.indeed.com/rc/clk?jk=788e7e311656fc54&fccid=09fad757f3449fa5&vjs=3"
+# 
+# tryCatch({
+#     html <- read_html(job_url)
+#     text <- html_text(html)
+#     text <- clean.text(text)
+#     df <- data.frame(skill = KEYWORDS, count = ifelse(str_detect(text, KEYWORDS), 1, 0))
+#     res$running$count <- res$running$count + df$count
+#     res$num_jobs <- res$num_jobs + 1
+# }, error = function(e) {
+#     cat("ERROR :", conditionMessage(e), "\n")
+# })
+
+
+
 
 
 # test1 -------------------------------------------------------------------
@@ -46,25 +97,25 @@ pages <- gsub(paste(nont, collapse = "|"), " ", content)
 # 
 # 
 
-content <- 
-pages %>% 
-    map_df(~(.) %>% as_tibble) 
-content
-colnames(content) <-  "text"
-
-content
-
-content %>%
-    unnest_tokens(word, text) %>% 
-    anti_join(stop_words) %>% 
-    group_by(word) %>%
-    count(sort = TRUE) %>%
-    ungroup() %>%
-    top_n(10) %>%
-    ggplot(aes(x = fct_reorder(word, n), y = n)) +
-    geom_bar(stat = "identity", width = 0.5) + 
-    xlab(NULL) +
-    coord_flip() +
-    ylab("Word Frequency") +
-    ggtitle("Most Common Corpus Words") +
-    theme(legend.position = "none")
+# content <- 
+# pages %>% 
+#     map_df(~(.) %>% as_tibble) 
+# content
+# colnames(content) <-  "text"
+# 
+# content
+# 
+# content %>%
+#     unnest_tokens(word, text) %>% 
+#     anti_join(stop_words) %>% 
+#     group_by(word) %>%
+#     count(sort = TRUE) %>%
+#     ungroup() %>%
+#     top_n(10) %>%
+#     ggplot(aes(x = fct_reorder(word, n), y = n)) +
+#     geom_bar(stat = "identity", width = 0.5) + 
+#     xlab(NULL) +
+#     coord_flip() +
+#     ylab("Word Frequency") +
+#     ggtitle("Most Common Corpus Words") +
+#     theme(legend.position = "none")
