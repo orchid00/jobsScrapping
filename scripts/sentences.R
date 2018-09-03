@@ -20,24 +20,35 @@ View(allsentences)
 
 rm(check1)
 
+write_csv(allsentences, "results/sentences/allsentences/allsentences.csv")
+save(allsentences, file = "results/RData/allsentences.RData")
+
+class(allsentences)
+dim(allsentences)
+
+# test for duplicated sentences
+allsentences %>% 
+    distinct(sentence) %>% 
+    dim()
+
 mysentences <-
 allsentences %>% 
-    arrange(sentence) %>% 
-    group_by(sentence) %>% 
-    count(sort = TRUE) %>%
-    ungroup()
+    distinct(sentence, .keep_all = TRUE) %>% 
+    mutate_at(vars(sentence), ~str_extract(., "^[^>]+[A-Za-z\\d]")) %>% 
+    mutate_at(vars(sentence), ~str_replace_all(., "[\\d]+$", "")) %>% # Rremove numbers at the end
+    mutate_at(vars(sentence), ~str_replace_all(., "responsibilities:", "responsibilities: ")) %>%
+    mutate_at(vars(sentence), ~str_replace_all(., "qualifications:", "qualifications: ")) %>%
+    mutate_at(vars(sentence), ~str_replace_all(., "#", "")) %>% 
+    mutate_at(vars(sentence), ~str_squish(.)) %>%  # reduced repeated white spaces in a string 
+    count(sentence, doc) %>% 
+    arrange(sentence) 
 
+dim(mysentences)
 View(mysentences)
 
-write_csv(mysentences, paste0("results/", "top_sentences.csv"))
+write_csv(mysentences, paste0("results/sentences/allsentences/", "top_sentences.csv"))
+save(mysentences, file = "results/RData/mysentences.RData")
 
-library(wordcloud)
-library(tidytext)
+class(mysentences)
+dim(mysentences)
 
-
-mysentences %>%
-    select(sentence, repetitions = n) %>% 
-    #anti_join(stop_words, by = c("sentence" = "word")) %>% 
-    count(sentence) %>% 
-    arrange(desc(n)) %>%
-    with(wordcloud(sentence, n))
