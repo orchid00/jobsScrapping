@@ -8,6 +8,9 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r calls, echo = FALSE, message = FALSE, warning = FALSE}
+source(file = "words.R")
+```
 ## Introduction
 
 Reference - [Job scrapping in R by Steve liang](https://github.com/steve-liang/DSJobSkill)
@@ -38,10 +41,10 @@ There are several other fields can be assigned, but for our Data steward specifi
 
 ```{r message=F}
 # Load packages
-library(rvest)
-library(stringr)
-library(dplyr)
-library(ggplot2)
+#library(rvest)
+#library(stringr)
+#library(dplyr)
+#library(ggplot2)
 library(forcats)
 
 # Indeed Search Words
@@ -133,16 +136,18 @@ clean.text <- function(text) {
 
 # Given running total dataframe and links to scrape skills and compute running total
 ScrapeJobLinks <- function(res, job_links) {
-  for (i in 1:length(job_links)) {
+  for (i in seq_along(job_links)) {
     job_url <- paste0(base_URL, job_links[i])
 
     Sys.sleep(1)
     cat(paste0("Reading job ", i, "\n"))
 
     tryCatch({
-      html <- read_html(job_url)
-      text <- html_text(html)
-      text <- clean.text(text)
+      page_content <- getPageContent(job_url, i)
+      getPageSentences(page_content, as.character(i))
+      mywords <- getPageWords(page_content, as.character(i))
+      plotWords(mywords, as.character(i)) 
+      text <- page_content
       df <- data.frame(skill = KEYWORDS, count = ifelse(str_detect(text, KEYWORDS), 1, 0))
       res$running$count <- res$running$count + df$count
       res$num_jobs <- res$num_jobs + 1

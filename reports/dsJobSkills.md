@@ -46,10 +46,10 @@ code now.
 
 ``` r
 # Load packages
-library(rvest)
-library(stringr)
-library(dplyr)
-library(ggplot2)
+#library(rvest)
+#library(stringr)
+#library(dplyr)
+#library(ggplot2)
 library(forcats)
 
 # Indeed Search Words
@@ -97,7 +97,7 @@ job_count <- start_page %>%
 job_count
 ```
 
-    ## [1] "Page 1 of 62 jobs"
+    ## [1] "Page 1 of 65 jobs"
 
 ``` r
 job_count_total <- 
@@ -105,7 +105,7 @@ job_count_total <-
 cat("Total job count: ", job_count_total)
 ```
 
-    ## Total job count:  62
+    ## Total job count:  65
 
 Scraping the job links and page link requires deeper knowledge in html.
 I spent quite some time to extract those two parts out. Jobs are under
@@ -150,14 +150,13 @@ importance). By doing this iterating over all jobs, we will gather a
 total count(occurrence) of each skill among all jobs.
 
 Before that, I need to come up with a list of job skills that are most
-popular/commonly used in Data Scientist
-Job.
+popular/commonly used in Data Scientist Job.
 
 ``` r
-KEYWORDS <- c("creation", "create", "created", "communicate", "communicating", 
+KEYWORDS <- c("creation", "create", "communicate", "communicating", 
               "communication", "manage", "manages", "management", "SAS", 
-              "Excel", "AWS", "Azure", "Java", "Tableau", "SQL", "data bases", 
-              "database", "harvests", "improvement", "KPI", "control", "MSc", 
+              "Excel", "Java", "Tableau", "SQL", "database", "improvement", 
+              "KPI", "control", "MSc", "Ph.D.",
               "PhD", "experience", "tools", "systems", "autonomous", "methodical",
               "organized", "organised", "Strong analytical", 
               "interpersonal skills", "adapts", "challenge", "challenges",
@@ -184,16 +183,18 @@ clean.text <- function(text) {
 
 # Given running total dataframe and links to scrape skills and compute running total
 ScrapeJobLinks <- function(res, job_links) {
-  for (i in 1:length(job_links)) {
+  for (i in seq_along(job_links)) {
     job_url <- paste0(base_URL, job_links[i])
 
     Sys.sleep(1)
     cat(paste0("Reading job ", i, "\n"))
 
     tryCatch({
-      html <- read_html(job_url)
-      text <- html_text(html)
-      text <- clean.text(text)
+      page_content <- getPageContent(job_url, i)
+      getPageSentences(page_content, as.character(i))
+      mywords <- getPageWords(page_content, as.character(i))
+      plotWords(mywords, as.character(i)) 
+      text <- page_content
       df <- data.frame(skill = KEYWORDS, count = ifelse(str_detect(text, KEYWORDS), 1, 0))
       res$running$count <- res$running$count + df$count
       res$num_jobs <- res$num_jobs + 1
@@ -225,7 +226,261 @@ if (job_count != 0) {
   cat("Scraping jobs in Start Page\n")
   results <- ScrapeJobLinks(results, links)
 }
+```
 
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+``` r
 if (length(page_links) > 0) {
   for (p in 1:length(page_links) - 1) {
     cat("Moving to Next 50 jobs\n")
@@ -245,6 +500,42 @@ if (length(page_links) > 0) {
 }
 ```
 
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
+    ## Joining, by = "word"
+
+    ## Selecting by n
+
+    ## Saving 7 x 5 in image
+
 Let’s bring up the result sorted in descending order of occurrence:
 
 ``` r
@@ -252,54 +543,54 @@ Let’s bring up the result sorted in descending order of occurrence:
 results$running <- 
     results$running %>% 
        arrange(desc(count))
-print(results$running)
+results$running %>% 
+    knitr::kable(caption = "Table 1: Skills per count")
 ```
 
-    ##                   skill count
-    ## 1               control    54
-    ## 2                     R    54
-    ## 3                create    53
-    ## 4                manage    49
-    ## 5            management    48
-    ## 6            experience    47
-    ## 7         communication    34
-    ## 8               systems    31
-    ## 9                 Excel    30
-    ## 10                tools    29
-    ## 11      data management    25
-    ## 12          improvement    22
-    ## 13             database    18
-    ## 14             creation    17
-    ## 15                  SQL    15
-    ## 16           leadership    14
-    ## 17          communicate    12
-    ## 18            challenge    12
-    ## 19           continuous    12
-    ## 20           challenges     9
-    ## 21            organized     8
-    ## 22    Strong analytical     8
-    ## 23                 Java     7
-    ## 24              Tableau     7
-    ## 25 interpersonal skills     5
-    ## 26                  SAS     4
-    ## 27                  KPI     3
-    ## 28          programming     3
-    ## 29              manages     2
-    ## 30           methodical     2
-    ## 31               adapts     2
-    ## 32               Python     2
-    ## 33        communicating     1
-    ## 34           autonomous     1
-    ## 35              created     0
-    ## 36                  AWS     0
-    ## 37                Azure     0
-    ## 38           data bases     0
-    ## 39             harvests     0
-    ## 40                  MSc     0
-    ## 41                  PhD     0
-    ## 42            organised     0
-    ## 43            scripting     0
-    ## 44           motivating     0
+| skill                | count |
+| :------------------- | ----: |
+| R                    |    48 |
+| manage               |    42 |
+| management           |    40 |
+| tools                |    25 |
+| Excel                |    23 |
+| data management      |    22 |
+| create               |    16 |
+| database             |    16 |
+| organized            |     8 |
+| challenges           |     8 |
+| Tableau              |     6 |
+| Strong analytical    |     6 |
+| KPI                  |     3 |
+| communicating        |     1 |
+| autonomous           |     1 |
+| adapts               |     1 |
+| creation             |     0 |
+| communicate          |     0 |
+| communication        |     0 |
+| manages              |     0 |
+| SAS                  |     0 |
+| Java                 |     0 |
+| SQL                  |     0 |
+| improvement          |     0 |
+| control              |     0 |
+| MSc                  |     0 |
+| Ph.D.                |     0 |
+| PhD                  |     0 |
+| experience           |     0 |
+| systems              |     0 |
+| methodical           |     0 |
+| organised            |     0 |
+| interpersonal skills |     0 |
+| challenge            |     0 |
+| continuous           |     0 |
+| programming          |     0 |
+| Python               |     0 |
+| scripting            |     0 |
+| leadership           |     0 |
+| motivating           |     0 |
+
+Table 1: Skills per count
 
 It’s more informative to calculate the percentage of apperances, and
 visualize it using ggplot.

@@ -25,7 +25,7 @@ getPageSentences <- function(page_content, nam){
     collected_sentences <- 
         page_content %>% 
         unnest_tokens(sentence, text, token = "sentences")
-    write_csv(collected_sentences, paste0("results/sentences/", nam, ".csv"))
+    write_csv(collected_sentences, paste0("../results/sentences/", nam, ".csv"))
     #return(collected_sentences)
 }
 
@@ -39,7 +39,7 @@ getPageWords <- function(page_content, nam){
         count(sort = TRUE) %>%
         ungroup()
     
-    write_csv(words_counts, paste0("results/words/", nam, ".csv"))
+    write_csv(words_counts, paste0("../results/words/", nam, ".csv"))
     return(words_counts)
 }
 
@@ -57,7 +57,7 @@ plotWords <- function(words_counts, nam){
         theme_minimal() +
         theme(legend.position = "none", 
               text = element_text(size = 16, family = "serif"))
-    ggsave(filename = paste0("results/figures/", nam, ".png"))
+    ggsave(filename = paste0("../results/figures/", nam, ".png"))
 }
 
 
