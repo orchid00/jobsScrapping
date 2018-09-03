@@ -1,3 +1,4 @@
 # add ignored files
 .Rproj.user
 .Rhistory
+reports/dsJobSkills_files/*
