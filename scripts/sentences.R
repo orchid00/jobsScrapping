@@ -52,3 +52,71 @@ save(mysentences, file = "results/RData/mysentences.RData")
 class(mysentences)
 dim(mysentences)
 
+
+# load sentences
+
+load("results/RData/allsentences.RData")
+
+key_words_from_sentences <- 
+    mysentences %>% 
+    unnest_tokens(word, sentence) %>% 
+    anti_join(stop_words) %>% 
+    group_by(word) %>%
+    count(sort = TRUE) %>%
+    ungroup()
+
+dim(key_words_from_sentences)
+head(key_words_from_sentences)
+View(key_words_from_sentences)
+
+
+key_groups_from_sentences <- 
+    mysentences %>% 
+    unnest_tokens(ngram, sentence, token = "ngrams", n = 8) %>% 
+    count(ngram, sort = TRUE) %>% 
+    arrange(ngram)
+
+
+dim(key_groups_from_sentences)
+head(key_groups_from_sentences)
+tail(key_groups_from_sentences)
+View(key_groups_from_sentences)
+
+
+abilities <-
+    key_groups_from_sentences %>% 
+    filter(str_detect(ngram, "abilit"))
+
+abilities
+View(abilities)
+
+performance_ <-
+    key_groups_from_sentences %>% 
+    filter(str_detect(ngram, "perform"))
+
+performance_
+View(performance_)
+
+
+##
+tidy_text <- mysentences %>%
+    mutate(section = str_replace_all(sentence, "\\n", "")) %>%
+    unnest_tokens(
+        output = sentence,
+        input = sentence,
+        token = "sentences",
+        drop = FALSE,
+        to_lower = FALSE
+    ) %>%
+    mutate(
+        regex = str_replace_all(sentence, "\\(", "\\\\("),
+        regex = str_replace_all(regex, "\\)", "\\\\)"),
+        regex = str_replace_all(regex, "\\.", "\\\\.")
+    ) %>%
+    mutate(
+        start = str_locate(sentence, regex)[, 1],
+        end = str_locate(sentence, regex)[, 2]
+    ) %>%
+    select(sentence, start, end) %>%
+    arrange(desc(end)) %>% 
+    print()
