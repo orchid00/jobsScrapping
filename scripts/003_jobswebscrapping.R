@@ -6,7 +6,7 @@ library(tidyverse)
 # set url for search ------------------------------------------------------
 # Indeed Search Words
 base_url <- "https://www.indeed.com/"
-job_title <- "data+scientist"
+job_title <- "data+steward"
 location <- "United+States"
 
 adv_url <- paste0(base_url, 
@@ -64,7 +64,7 @@ ScrapeJobLinks <- function(res, job_links) {
     for (i in seq_along(job_links)) {
         job_url <- paste0(base_url, job_links[i])
         
-        Sys.sleep(1)
+        Sys.sleep(3)
         cat(paste0("Reading job ", i, "\n"))
         
         tryCatch({
