@@ -1,0 +1,47 @@
+https://www.indeed.com/l-United-States-jobs.html
+- Advanced search
+With all of these words
+steward
+- With the exact phrase
+"life sciences"
+- With these words in the title
+data
+
+display 50 per page
+
+10 results as of nov 27th
+
+https://www.indeed.com/jobs?
+https://www.indeed.com/jobs?q=%22life+sciences%22+title%3Adata+steward&l=United+States&radius=50
+
+
+https://www.indeed.com/viewjob?jk=f6eb2bd00684bda6&tk=1ctaj1nl85ml4803&from=serp&vjs=3
+https://www.indeed.com/viewjob?jk=0499f27ff04399fa&tk=1ctak0c735ml4802&from=serp&vjs=3
+https://www.indeed.com/viewjob?jk=fa304c7408ef3f3e&tk=1ctak0c735ml4802&from=serp&vjs=3
+https://www.indeed.com/viewjob?jk=9085f70e2aab5661&tk=1ctak0c735ml4802&from=serp&vjs=3
+
+
+Xpath= "/html/body/div[1]/div[3]/div[3]/div/div/div[1]/div[1]/div[4]"
+
+div class "jobsearch-JobComponent-description icl-u-xs-mt--md"
+
+Sections
+
+div class "jobSectionHeader"
+
+li - if it has a li add dot at the end
+
+Roles
+
+Responsibilities
+
+Requirements
+
+Profile  Description
+
+Knowledge Experience
+
+Critical Skills
+
+
+
